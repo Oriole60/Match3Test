@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static NormalItem;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class Board
 {
@@ -152,23 +153,75 @@ public class Board
 
     internal void FillGapsWithNewItems()
     {
+        List<Cell> fillingCells = new List<Cell>();
+
+        Dictionary<eNormalType,int> normalItemDict = new Dictionary<eNormalType,int>();
+
+        foreach (eNormalType type in System.Enum.GetValues(typeof(eNormalType)))
+        {
+            normalItemDict[type] = 0;
+        }
+
         for (int x = 0; x < boardSizeX; x++)
         {
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
+
+                NormalItem currentNormalItemCell = cell.Item as NormalItem;
+                if (currentNormalItemCell != null)
+                {
+                    if (normalItemDict.ContainsKey(currentNormalItemCell.ItemType))
+                    {
+                        normalItemDict[currentNormalItemCell.ItemType]++;
+                    }
+                }
                 if (!cell.IsEmpty) continue;
-
-                NormalItem item = new NormalItem();
-
-                item.SetType(Utils.GetRandomNormalType(), m_settings.IsChangedSkin, OnchangedSkin);
-                item.SetView();
-                item.SetViewRoot(m_root);
-
-                cell.Assign(item);
-                cell.ApplyItemPosition(true);
+                fillingCells.Add(cell);
             }
         }
+
+        foreach(Cell cell in fillingCells)
+        {
+            NormalItem item = new NormalItem();
+
+            List<eNormalType> neighbourNormalTypes = new List<eNormalType>();
+
+            if (cell.NeighbourRight != null && cell.NeighbourRight.Item is NormalItem)
+            {
+                NormalItem neighbourNormalItem = cell.NeighbourRight.Item as NormalItem;
+                neighbourNormalTypes.Add(neighbourNormalItem.ItemType);
+
+            }
+
+            if (cell.NeighbourUp != null && cell.NeighbourUp.Item is NormalItem)
+            {
+                NormalItem neighbourNormalItem = cell.NeighbourUp.Item as NormalItem;
+                neighbourNormalTypes.Add(neighbourNormalItem.ItemType);
+
+            }
+
+            if (cell.NeighbourBottom != null && cell.NeighbourBottom.Item is NormalItem)
+            {
+                NormalItem neighbourNormalItem = cell.NeighbourBottom.Item as NormalItem;
+                neighbourNormalTypes.Add(neighbourNormalItem.ItemType);
+
+            }
+
+            if (cell.NeighbourLeft != null && cell.NeighbourLeft.Item is NormalItem)
+            {
+                NormalItem neighbourNormalItem = cell.NeighbourLeft.Item as NormalItem;
+                neighbourNormalTypes.Add(neighbourNormalItem.ItemType);
+            }
+
+            item.SetType(Utils.GetKeyWithSmallestValueExcludingNeighbours(neighbourNormalTypes.ToArray(), normalItemDict),
+                m_settings.IsChangedSkin, OnchangedSkin);
+            item.SetView();
+            item.SetViewRoot(m_root);
+            cell.Assign(item);
+            cell.ApplyItemPosition(true);
+        }
+
     }
 
 
