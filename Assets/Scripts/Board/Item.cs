@@ -21,7 +21,9 @@ public class Item
             GameObject prefab = Resources.Load<GameObject>(prefabname);
             if (prefab)
             {
-                View = GameObject.Instantiate(prefab).transform;
+                //View = GameObject.Instantiate(prefab).transform;
+                //CHange to Object Pooler;
+                View = ObjectPooler.Instance.SpawnFromPool(prefabname, Vector3.zero, Quaternion.identity).transform;
             }
         }
     }
@@ -101,7 +103,11 @@ public class Item
             View.DOScale(0.1f, 0.1f).OnComplete(
                 () =>
                 {
-                    GameObject.Destroy(View.gameObject);
+                    //GameObject.Destroy(View.gameObject);
+                    //Change to ObjectPooler;
+
+                    View.gameObject.SetActive(false);
+
                     View = null;
                 }
                 );
@@ -132,7 +138,8 @@ public class Item
 
         if (View)
         {
-            GameObject.Destroy(View.gameObject);
+            //GameObject.Destroy(View.gameObject);
+            View.gameObject.SetActive(false );
             View = null;
         }
     }
