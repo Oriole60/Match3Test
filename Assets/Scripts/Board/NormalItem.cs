@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -15,11 +16,25 @@ public class NormalItem : Item
         TYPE_SEVEN
     }
 
+    private bool isChangedSkin = false;
+    private Action<SpriteRenderer, eNormalType> OnChangedSkin;
     public eNormalType ItemType;
 
-    public void SetType(eNormalType type)
+    public void SetType(eNormalType type, bool isChangedSkin = false, Action<SpriteRenderer, eNormalType> callBackOnChangedSkin = null)
     {
         ItemType = type;
+        this.isChangedSkin = isChangedSkin;
+        OnChangedSkin = callBackOnChangedSkin;
+    }
+
+    public override void SetView()
+    {
+        base.SetView();
+        if (isChangedSkin)
+        {
+            SpriteRenderer spriteRenderer = View.gameObject.GetComponent<SpriteRenderer>();
+            OnChangedSkin?.Invoke(spriteRenderer, ItemType);
+        }
     }
 
     protected override string GetPrefabName()

@@ -26,7 +26,7 @@ public class UIMainManager : MonoBehaviour
 
     internal void ShowMainMenu()
     {
-        m_gameManager.ClearLevel();
+        StartCoroutine(m_gameManager.ClearLevel());
         m_gameManager.SetState(GameManager.eStateGame.MAIN_MENU);
     }
 

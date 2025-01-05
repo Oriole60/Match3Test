@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static NormalItem;
 
 public class Board
 {
@@ -25,6 +26,10 @@ public class Board
 
     private int m_matchMin;
 
+    private bool isChangedSkin = false;
+
+    private GameSettings m_settings;
+
     public Board(Transform transform, GameSettings gameSettings)
     {
         m_root = transform;
@@ -33,7 +38,8 @@ public class Board
 
         this.boardSizeX = gameSettings.BoardSizeX;
         this.boardSizeY = gameSettings.BoardSizeY;
-
+        this.isChangedSkin = gameSettings.IsChangedSkin;
+        this.m_settings = gameSettings;
         m_cells = new Cell[boardSizeX, boardSizeY];
 
         CreateBoard();
@@ -102,7 +108,7 @@ public class Board
                     }
                 }
 
-                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()));
+                item.SetType(Utils.GetRandomNormalTypeExcept(types.ToArray()),m_settings.IsChangedSkin, OnchangedSkin);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -111,6 +117,12 @@ public class Board
             }
         }
     }
+
+    private void OnchangedSkin(SpriteRenderer spriteRenderer, eNormalType eNormalType)
+    {
+        if (spriteRenderer == null) return;
+        m_settings.OnChangeSkin((int)eNormalType, spriteRenderer);
+    } 
 
     internal void Shuffle()
     {
@@ -149,7 +161,7 @@ public class Board
 
                 NormalItem item = new NormalItem();
 
-                item.SetType(Utils.GetRandomNormalType());
+                item.SetType(Utils.GetRandomNormalType(), m_settings.IsChangedSkin, OnchangedSkin);
                 item.SetView();
                 item.SetViewRoot(m_root);
 
@@ -158,6 +170,8 @@ public class Board
             }
         }
     }
+
+
 
     internal void ExplodeAllItems()
     {
@@ -669,8 +683,8 @@ public class Board
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
+                cell.transform.SetParent(ObjectPooler.Instance.transform);
                 cell.gameObject.SetActive(false);
-                cell.transform.parent = ObjectPooler.Instance.transform;
                 cell.Clear();
 
                 //GameObject.Destroy(cell.gameObject);

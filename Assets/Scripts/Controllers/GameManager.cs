@@ -107,11 +107,11 @@ public class GameManager : MonoBehaviour
         StartCoroutine(WaitBoardController());
     }
 
-    internal void ClearLevel()
+    internal IEnumerator ClearLevel()
     {
         if (m_boardController)
         {
-            m_boardController.Clear();
+            yield return StartCoroutine( m_boardController.Clear());
             Destroy(m_boardController.gameObject);
             m_boardController = null;
         }

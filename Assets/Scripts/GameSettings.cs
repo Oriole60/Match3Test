@@ -15,4 +15,14 @@ public class GameSettings : ScriptableObject
     public float LevelTime = 30f;
 
     public float TimeForHint = 5f;
+
+    public bool IsChangedSkin = false;
+
+    [SerializeField] SkinItem skinItem;
+
+    public void OnChangeSkin(int skinIndex, SpriteRenderer spriteItem)
+    {
+        skinItem.SetSkin(skinIndex, spriteItem);
+    }
+
 }

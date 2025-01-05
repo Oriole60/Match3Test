@@ -284,9 +284,11 @@ public class BoardController : MonoBehaviour
         return cell1.IsNeighbour(cell2);
     }
 
-    internal void Clear()
+    internal IEnumerator Clear()
     {
         m_board.Clear();
+        yield return new WaitForEndOfFrame();
+
     }
 
     private void ShowHint()
