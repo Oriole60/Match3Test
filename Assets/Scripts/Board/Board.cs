@@ -673,6 +673,7 @@ public class Board
 
                 //GameObject.Destroy(cell.gameObject);
                 cell.gameObject.SetActive(false);
+                cell.transform.parent = ObjectPooler.Instance.transform;
                 m_cells[x, y] = null;
             }
         }
