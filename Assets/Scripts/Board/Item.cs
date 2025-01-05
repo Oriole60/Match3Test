@@ -47,6 +47,7 @@ public class Item
         if (View)
         {
             View.position = pos;
+            View.transform.localScale = Vector3.one;
         }
     }
 
