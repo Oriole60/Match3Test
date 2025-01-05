@@ -669,11 +669,12 @@ public class Board
             for (int y = 0; y < boardSizeY; y++)
             {
                 Cell cell = m_cells[x, y];
+                cell.gameObject.SetActive(false);
+                cell.transform.parent = ObjectPooler.Instance.transform;
                 cell.Clear();
 
                 //GameObject.Destroy(cell.gameObject);
-                cell.gameObject.SetActive(false);
-                cell.transform.parent = ObjectPooler.Instance.transform;
+
                 m_cells[x, y] = null;
             }
         }

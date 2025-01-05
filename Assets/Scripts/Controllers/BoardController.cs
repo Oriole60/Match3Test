@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class BoardController : MonoBehaviour
 {
+    LayerMask cellLayer;
+    float distanceRayCast = 0f;
+
     public event Action OnMoveEvent = delegate { };
 
     public bool IsBusy { get; private set; }
@@ -48,6 +51,8 @@ public class BoardController : MonoBehaviour
 
     private void Fill()
     {
+        cellLayer = LayerMask.GetMask("Cell");
+        distanceRayCast = 10f;
         m_board.Fill();
         FindMatchesAndCollapse();
     }
@@ -87,7 +92,7 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,distanceRayCast, cellLayer.value);
             if (hit.collider != null)
             {
                 m_isDragging = true;
@@ -102,7 +107,7 @@ public class BoardController : MonoBehaviour
 
         if (Input.GetMouseButton(0) && m_isDragging)
         {
-            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            var hit = Physics2D.Raycast(m_cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, distanceRayCast, cellLayer.value);
             if (hit.collider != null)
             {
                 if (m_hitCollider != null && m_hitCollider != hit.collider)

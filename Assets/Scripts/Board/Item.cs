@@ -140,7 +140,8 @@ public class Item
         if (View)
         {
             //GameObject.Destroy(View.gameObject);
-            View.gameObject.SetActive(false );
+            View.gameObject.SetActive(false);
+            View.transform.parent = ObjectPooler.Instance.transform;
             View = null;
         }
     }
